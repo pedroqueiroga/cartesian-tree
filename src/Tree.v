@@ -2,6 +2,16 @@ Inductive tree : Type :=
 | leaf : tree
 | node : nat -> tree -> tree -> tree.
 
-Compute (node 1 leaf leaf).
+Definition create_cartesian_tree : list nat -> tree.
+Admitted.
 
-Compute (node 1 (node 2 leaf leaf) leaf).
+Definition insert : nat -> tree -> tree.
+Admitted.
+
+Definition delete_min : tree -> tree.
+Admitted.
+
+Definition merge : tree -> tree -> tree.
+Admitted.
+
+Definition empty : tree := leaf.
