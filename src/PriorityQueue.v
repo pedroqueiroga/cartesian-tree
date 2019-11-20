@@ -48,28 +48,40 @@ Module CartesianTree <: PRIQUEUE.
 
   Definition ct_empty : cartesian_tree := leaf.
 
-  Definition ct : cartesian_tree -> Prop.
-  Admitted.
+  Definition ct  (ct: cartesian_tree) : Prop := True.
 
   Definition abs : cartesian_tree -> list nat -> Prop.
   Admitted.
 
-  Definition perm : list nat -> list nat -> Prop.
+
+  (*to do*)
+  Fixpoint perm (l1: list nat) (l2: list nat) : Prop :=
+  match l1, l2 with
+  | nil, nil => True
+  | nil, _ => False
+  | _, nil => False
+  | (x::xs), (y::ys) => False (*if ( Nat.eqb (List.count_occ l1 x) (List.count_occ l2 x)) then perm remove x (x::xs) remove x (y::ys) else False*)
+  end.
+
+  Definition create_cartesian_tree  (l: list nat) : cartesian_tree .
   Admitted.
 
-  Definition create_cartesian_tree : list nat -> cartesian_tree.
+  Fixpoint ct_insert (n: nat) (ct: cartesian_tree) : cartesian_tree :=
+  match ct with
+  | leaf => node n leaf leaf
+  | node x l r => 
+               if x <? n then ct_insert n r 
+               else if n <? x then node n (node x l r) leaf
+               else node x l (node n r leaf)
+  end.
+
+  Definition ct_delete_min (ct: cartesian_tree) : option (nat * cartesian_tree).
   Admitted.
 
-  Definition ct_insert : nat -> cartesian_tree -> cartesian_tree.
+  Definition ct_merge (ct1: cartesian_tree ) (ct2: cartesian_tree) : cartesian_tree.
   Admitted.
 
-  Definition ct_delete_min : cartesian_tree -> option (nat * cartesian_tree).
-  Admitted.
-
-  Definition ct_merge : cartesian_tree -> cartesian_tree -> cartesian_tree.
-  Admitted.
-
-  Definition ct_flatten : cartesian_tree -> list nat.
+  Definition ct_flatten (ct: cartesian_tree) : list nat.
   Admitted.
 
 
@@ -81,7 +93,7 @@ Module CartesianTree <: PRIQUEUE.
   Proof. Admitted.
 
   Theorem empty_ct : ct ct_empty.
-  Proof. Admitted.
+  Proof. reflexivity. Qed.
 
   Theorem empty_relate_ct : abs ct_empty nil.
   Proof. Admitted.
