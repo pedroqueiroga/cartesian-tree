@@ -132,20 +132,19 @@ Module CartesianTree <: PRIQUEUE.
   Definition priq := ct.
   Definition Abs := abs.
 
-(*Essa parte ainda está com erro, vou ler o artigo sobre ModuleSystem para ver
-  como fazer a correlação entre os Axiom e os Lemma
-  Artigo em: https://github.com/coq/coq/wiki/ModuleSystemTutorial*)
+(*Usei o Let identifier := term
+  Em: https://coq.inria.fr/refman/language/gallina-extensions.html#coq:exn.ident-already-exists-let*)
 
-  Lemma can_relate : can_relate_ct.
-  Lemma abs_perm : abs_perm_ct.
-  Lemma empty_priq : empty_ct.
-  Lemma empty_relate : empty_relate_ct.
-  Lemma insert_priq : insert_ct.
-  Lemma insert_relate : insert_relate_ct.
-  Lemma delete_min_None_relate : delete_min_None_relate_ct.
-  Lemma delete_min_Some_priq : delete_min_Some_ct.
-  Lemma delete_min_Some_relate : delete_min_Some_relate_ct.
-  Lemma merge_priq : merge_ct.
-  Lemma merge_relate : merge_relate_ct.
+  Let can_relate := can_relate_ct.
+  Let abs_perm := abs_perm_ct.
+  Let empty_priq := empty_ct.
+  Let empty_relate := empty_relate_ct.
+  Let insert_priq := insert_ct.
+  Let insert_relate := insert_relate_ct.
+  Let delete_min_None_relate := delete_min_None_relate_ct.
+  Let delete_min_Some_priq := delete_min_Some_ct.
+  Let delete_min_Some_relate := delete_min_Some_relate_ct.
+  Let merge_priq := merge_ct.
+  Let merge_relate := merge_relate_ct.
 
 End CartesianTree.
