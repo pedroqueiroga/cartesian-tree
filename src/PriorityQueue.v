@@ -75,8 +75,19 @@ Module CartesianTree <: PRIQUEUE.
                else node x l (node n r leaf)
   end.
 
-  Definition ct_delete_min (ct: cartesian_tree) : option (nat * cartesian_tree).
-  Admitted.
+  Fixpoint ct_append_left (sub_ct : cartesian_tree) (ct : cartesian_tree) : cartesian_tree :=
+    match ct with
+    | leaf => sub_ct
+    | node x l r => node x (ct_append_left sub_ct l) r
+    end.
+
+  Definition ct_delete_min (ct : cartesian_tree) : option (nat * cartesian_tree) :=
+    match ct with
+    | leaf => None
+    | node x (node xl ll lr) (node xr rl rr) => Some (x, (node xr (ct_append_left ll rl) rr))
+    | node x leaf r => Some (x, r)
+    | node x l leaf => Some (x, l)
+    end.
 
   Definition ct_merge (ct1: cartesian_tree ) (ct2: cartesian_tree) : cartesian_tree.
   Admitted.
