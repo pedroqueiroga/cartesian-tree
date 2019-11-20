@@ -63,9 +63,6 @@ Module CartesianTree <: PRIQUEUE.
   | (x::xs), (y::ys) => False (*if ( Nat.eqb (List.count_occ l1 x) (List.count_occ l2 x)) then perm remove x (x::xs) remove x (y::ys) else False*)
   end.
 
-  Definition create_cartesian_tree  (l: list nat) : cartesian_tree .
-  Admitted.
-
   Fixpoint ct_insert (n: nat) (ct: cartesian_tree) : cartesian_tree :=
   match ct with
   | leaf => node n leaf leaf
@@ -73,6 +70,16 @@ Module CartesianTree <: PRIQUEUE.
                if x <? n then ct_insert n r 
                else if n <? x then node n (node x l r) leaf
                else node x l (node n r leaf)
+  end.
+
+  Fixpoint create_cartesian_tree  (l: list nat) : cartesian_tree :=
+  match l with
+  | nil => leaf
+  | (x::xs) => 
+            match xs with
+            | nil => node x leaf leaf
+            | y::ys => fold_right ct_insert leaf (y::ys)
+            end
   end.
 
   Fixpoint ct_append_left (sub_ct : cartesian_tree) (ct : cartesian_tree) : cartesian_tree :=
