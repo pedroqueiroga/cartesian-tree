@@ -132,11 +132,17 @@ Module CartesianTree <: PRIQUEUE.
   Compute ct_delete_min (node 4 (node 8 leaf leaf) (node 6 leaf leaf)).
   Compute ct_delete_min (node 3 (node 4 (node 8 leaf leaf) (node 6 leaf leaf)) (node 5 leaf leaf)).
 
-  Theorem can_relate_ct : forall p, ct p -> exists al, abs p al.
-  Proof. Admitted.
+  Theorem can_relate_ct : forall (p : cartesian_tree), exists al, abs p al.
+  Proof.
+    intros.
+    eexists.
+    instantiate (1:=(ct_flatten p)).
+    unfold abs. destruct p eqn:H.
+    - simpl. reflexivity.
+    - simpl. Abort.
 
   Theorem abs_perm_ct : 
-    forall p al bl, ct p -> abs p al -> abs p bl -> Permutation al bl.
+    forall (p : cartesian_tree) al bl, abs p al /\ abs p bl -> Permutation al bl.
   Proof. Admitted.
 
   Theorem empty_ct : ct ct_empty.
