@@ -24,13 +24,13 @@ Module Type PRIQUEUE.
   Axiom delete_min_None_relate :
     forall p, priq p -> (Abs p nil <-> delete_min p = None).
   Axiom delete_min_Some_priq :
-    forall p q k, priq p \u2192 delete_min p = Some(k,q) \u2192 priq q.
+    forall p q k, priq p → delete_min p = Some(k,q) → priq q.
   Axiom delete_min_Some_relate :
-    forall (p q: priqueue) k (pl ql: list key), priq p \u2192
-       Abs p pl \u2192
-       delete_min p = Some (k,q) \u2192
-       Abs q ql \u2192
-       Permutation pl (k::ql) \u2227 Forall (le k) ql.
+    forall (p q: priqueue) k (pl ql: list key), priq p →
+       Abs p pl →
+       delete_min p = Some (k,q) →
+       Abs q ql →
+       Permutation pl (k::ql) ∧ Forall (le k) ql.
   Axiom merge_priq : forall p q, priq p -> priq q -> priq (merge p q).
   Axiom merge_relate :
     forall p q pl ql al,
@@ -84,12 +84,7 @@ Module CartesianTree <: PRIQUEUE.
     end.
 
   Definition ct_merge (ct1: cartesian_tree ) (ct2: cartesian_tree) : cartesian_tree.
-  match ct1 with
-    | leaf => ct_flatten ct2
-    | node x l r => match ct2 with
-                      | leaf => ct_flatten ct1
-                      | node x l r create_cartesian_tree (ct_flatten ct1) (ct_flatten ct2)
-  end.
+  Admitted.
 
   Fixpoint ct_flatten (ct: cartesian_tree) : list nat :=
   match ct with
@@ -147,15 +142,15 @@ Module CartesianTree <: PRIQUEUE.
   Proof. Admitted.
 
   Theorem delete_min_Some_ct :
-    forall p q k, ct p \u2192 ct_delete_min p = Some(k,q) \u2192 ct q.
+    forall p q k, ct p → ct_delete_min p = Some(k,q) → ct q.
   Proof. Admitted.
 
   Theorem delete_min_Some_relate_ct :
-    forall (p q: cartesian_tree) k (pl ql: list nat), ct p \u2192
-       abs p pl \u2192
-       ct_delete_min p = Some (k,q) \u2192
-       abs q ql \u2192
-       Permutation pl (k::ql) \u2227 Forall (le k) ql.
+    forall (p q: cartesian_tree) k (pl ql: list nat), ct p →
+       abs p pl →
+       ct_delete_min p = Some (k,q) →
+       abs q ql →
+       Permutation pl (k::ql) ∧ Forall (le k) ql.
   Proof. Admitted.
 
   Theorem merge_ct : forall p q, ct p -> ct q -> ct (ct_merge p q).
