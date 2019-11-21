@@ -75,6 +75,8 @@ Module CartesianTree <: PRIQUEUE.
             end
   end.
 
+  Compute create_cartesian_tree (8 :: 4 :: 6 :: 3 :: 5 :: nil).
+
   Fixpoint ct_append_left (sub_ct : cartesian_tree) (ct : cartesian_tree) : cartesian_tree :=
     match ct with
     | leaf => sub_ct
@@ -92,9 +94,11 @@ Module CartesianTree <: PRIQUEUE.
   Definition ct_merge (ct1: cartesian_tree ) (ct2: cartesian_tree) : cartesian_tree.
   Admitted.
 
-  Definition ct_flatten (ct: cartesian_tree) : list nat.
-  Admitted.
-
+  Fixpoint ct_flatten (ct: cartesian_tree) : list nat :=
+  match ct with
+  | leaf => nil
+  | node x l r => ct_flatten l ++ cons x nil ++ ct_flatten r
+  end.
 
   Theorem can_relate_ct : forall p, ct p -> exists al, abs p al.
   Proof. Admitted.
