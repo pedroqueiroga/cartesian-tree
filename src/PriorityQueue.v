@@ -143,10 +143,10 @@ Module CartesianTree <: PRIQUEUE.
   Proof. reflexivity. Qed.
 
   Theorem empty_relate_ct : abs ct_empty nil.
-  Proof. Admitted.
+  Proof. Admitted. 
 
   Theorem insert_ct : forall k p, ct p -> ct (ct_insert k p).
-  Proof. Admitted.
+  Proof. intros. unfold ct. reflexivity. Qed.
 
   Theorem insert_relate_ct :
     forall p al k, ct p -> abs p al -> abs (ct_insert k p) (k::al).
@@ -158,7 +158,7 @@ Module CartesianTree <: PRIQUEUE.
 
   Theorem delete_min_Some_ct :
     forall p q k, ct p → ct_delete_min p = Some(k,q) → ct q.
-  Proof. Admitted.
+  Proof. intros. unfold ct. reflexivity. Qed.
 
   Theorem delete_min_Some_relate_ct :
     forall (p q: cartesian_tree) k (pl ql: list nat), ct p →
