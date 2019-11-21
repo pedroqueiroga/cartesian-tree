@@ -2,6 +2,8 @@ Require Import Utf8.
 Require Import List.
 Require Import Nat.
 Require Import Permutation.
+Require Import Bool.
+Scheme Equality for list.
 
 Module Type PRIQUEUE.
   Definition key := nat.
@@ -69,42 +71,54 @@ Module CartesianTree <: PRIQUEUE.
             end
   end.
 
-  Fixpoint ct_append_left (sub_ct : cartesian_tree) (ct : cartesian_tree) : cartesian_tree :=
-    match ct with
-    | leaf => sub_ct
-    | node x l r => node x (ct_append_left sub_ct l) r
-    end.
-
-  Definition ct_delete_min (ct : cartesian_tree) : option (nat * cartesian_tree) :=
-    match ct with
-    | leaf => None
-    | node x (node xl ll lr) (node xr rl rr) => Some (x, (node xr (ct_append_left ll rl) rr))
-    | node x leaf r => Some (x, r)
-    | node x l leaf => Some (x, l)
-    end.
-
-  Definition ct_merge (ct1: cartesian_tree ) (ct2: cartesian_tree) : cartesian_tree.
-  Admitted.
-
   Fixpoint ct_flatten (ct: cartesian_tree) : list nat :=
   match ct with
   | leaf => nil
   | node x l r => ct_flatten l ++ cons x nil ++ ct_flatten r
   end.
 
+  Definition ct_merge (ct1: cartesian_tree ) (ct2: cartesian_tree) : cartesian_tree :=
+  create_cartesian_tree ((ct_flatten ct1) ++ (ct_flatten ct2)).
 
-  Definition prop2bool (p: Prop) : bool :=
-  match p with
-  | True => true
+  Definition ct_delete_min (ct : cartesian_tree) : option (nat * cartesian_tree) :=
+  match ct with
+  | leaf => None
+  | node x l r => Some (x, ct_merge l r)
   end.
-  
+
+  Print Is_true.
+  Print list_beq.
+  Print remove.
+
+  Fixpoint remv (n: nat) (l: list nat) : list nat :=
+  match l with
+  | nil => nil
+  | (x::xs) => if n =? x then xs else (cons x nil )++ (remv n xs)
+  end.
+
+  Fixpoint l_eq (l1: list nat) (l2: list nat) : bool :=
+  match l1, l2 with
+  | nil, nil => true
+  | nil, _ => false
+  | _, nil => false
+  | (x::xs), (y::ys) => if x =? y then l_eq xs ys else false
+  end.
+
+  Fixpoint perm (l1: list nat) (l2: list nat): bool :=
+  match l1, l2 with
+  | nil, nil => true
+  | (x::xs), (y::ys) => if andb (l_eq (remv x (y::ys)) nil) (negb (l_eq ys nil)) then false else perm xs (remv x (y::ys))
+  | _, _ => false
+  end.
+
   Definition abs (ct: cartesian_tree) (l: list nat) : Prop :=
   match ct, l with
   | leaf, nil => True
-  | node n l r, x::xs => if prop2bool (Permutation (ct_flatten ct) (x::xs)) then True else False
+  | node n l r, x::xs => if perm (ct_flatten ct) (x::xs) then True else False
   | _, _ => False
   end.
 
+  Compute abs (node 3 (node 8 leaf leaf) (node 5 leaf leaf)) (5::3::8::nil).
   Compute create_cartesian_tree (8::4::6::3::5::4::nil).
   Compute ct_flatten (create_cartesian_tree (8::4::6::3::5::4::nil)).
   Compute create_cartesian_tree (8::nil).
@@ -116,6 +130,7 @@ Module CartesianTree <: PRIQUEUE.
   Compute ct_flatten (node 3 (node 8 leaf leaf) (node 5 leaf leaf)).
   Compute ct_delete_min (node 3 (node 4 (node 8 leaf leaf) (node 6 leaf leaf)) leaf).
   Compute ct_delete_min (node 4 (node 8 leaf leaf) (node 6 leaf leaf)).
+  Compute ct_delete_min (node 3 (node 4 (node 8 leaf leaf) (node 6 leaf leaf)) (node 5 leaf leaf)).
 
   Theorem can_relate_ct : forall p, ct p -> exists al, abs p al.
   Proof. Admitted.
