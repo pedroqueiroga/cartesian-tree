@@ -55,7 +55,7 @@ Module CartesianTree <: PRIQUEUE.
   | leaf => node n leaf leaf
   | node x l r => 
                if x <? n then node x  l (ct_insert n r) 
-               else if n <? x then node n (node x l r) leaf
+               else if n <? x then node n ct leaf
                else node x l (node n r leaf)
   end.
 
@@ -65,11 +65,9 @@ Module CartesianTree <: PRIQUEUE.
   | (x::xs) => 
             match xs with
             | nil => node x leaf leaf
-            | y::ys => fold_right ct_insert leaf (y::ys)
+            | y::ys => fold_right ct_insert leaf (rev (x::y::ys))
             end
   end.
-
-  Compute create_cartesian_tree (8 :: 4 :: 6 :: 3 :: 5 :: nil).
 
   Fixpoint ct_append_left (sub_ct : cartesian_tree) (ct : cartesian_tree) : cartesian_tree :=
     match ct with
@@ -94,13 +92,30 @@ Module CartesianTree <: PRIQUEUE.
   | node x l r => ct_flatten l ++ cons x nil ++ ct_flatten r
   end.
 
+
+  Definition prop2bool (p: Prop) : bool :=
+  match p with
+  | True => true
+  end.
   
   Definition abs (ct: cartesian_tree) (l: list nat) : Prop :=
-  match ct, l with:
+  match ct, l with
   | leaf, nil => True
-  | node x l r, x::xs => Permutation (flatten ct) l
+  | node n l r, x::xs => if prop2bool (Permutation (ct_flatten ct) (x::xs)) then True else False
   | _, _ => False
   end.
+
+  Compute create_cartesian_tree (8::4::6::3::5::4::nil).
+  Compute ct_flatten (create_cartesian_tree (8::4::6::3::5::4::nil)).
+  Compute create_cartesian_tree (8::nil).
+  Compute create_cartesian_tree (8::4::nil).
+  Compute ct_insert 3 (node 4 (node 8 leaf leaf) (node 6 leaf leaf)).
+  Compute ct_insert 5 (node 3 (node 4 (node 8 leaf leaf) (node 6 leaf leaf)) leaf).
+  Compute ct_flatten (node 3 (node 4 (node 8 leaf leaf) (node 6 leaf leaf)) (node 5 leaf leaf)).
+  Compute create_cartesian_tree (8 :: 4 :: 6 :: 3 :: 5 :: nil).
+  Compute ct_flatten (node 3 (node 8 leaf leaf) (node 5 leaf leaf)).
+  Compute ct_delete_min (node 3 (node 4 (node 8 leaf leaf) (node 6 leaf leaf)) leaf).
+  Compute ct_delete_min (node 4 (node 8 leaf leaf) (node 6 leaf leaf)).
 
   Theorem can_relate_ct : forall p, ct p -> exists al, abs p al.
   Proof. Admitted.
