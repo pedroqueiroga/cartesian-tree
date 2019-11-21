@@ -50,17 +50,11 @@ Module CartesianTree <: PRIQUEUE.
 
   Definition ct  (ct: cartesian_tree) : Prop := True.
 
-  Definition abs : cartesian_tree -> list nat -> Prop.
-  Admitted.
-
-  Print count_occ.
-  Print Permutation.
-
   Fixpoint ct_insert (n: nat) (ct: cartesian_tree) : cartesian_tree :=
   match ct with
   | leaf => node n leaf leaf
   | node x l r => 
-               if x <? n then ct_insert n r 
+               if x <? n then node x  l (ct_insert n r) 
                else if n <? x then node n (node x l r) leaf
                else node x l (node n r leaf)
   end.
@@ -98,6 +92,14 @@ Module CartesianTree <: PRIQUEUE.
   match ct with
   | leaf => nil
   | node x l r => ct_flatten l ++ cons x nil ++ ct_flatten r
+  end.
+
+  
+  Definition abs (ct: cartesian_tree) (l: list nat) : Prop :=
+  match ct, l with:
+  | leaf, nil => True
+  | node x l r, x::xs => Permutation (flatten ct) l
+  | _, _ => False
   end.
 
   Theorem can_relate_ct : forall p, ct p -> exists al, abs p al.
