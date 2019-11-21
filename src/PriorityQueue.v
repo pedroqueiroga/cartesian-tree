@@ -1,11 +1,11 @@
 Require Import Utf8.
 Require Import List.
 Require Import Nat.
+Require Import Permutation.
 
 Module Type PRIQUEUE.
   Definition key := nat.
   Parameter  priqueue : Type.
-  Parameter  permutation : list key  -> list key  -> Prop.
   Parameter  empty : priqueue.
   Parameter  insert : key -> priqueue -> priqueue.
   Parameter  delete_min : priqueue -> option (key * priqueue).
@@ -15,7 +15,7 @@ Module Type PRIQUEUE.
 
   Axiom can_relate : forall p, priq p -> exists al, Abs p al.
   Axiom abs_perm : 
-    forall p al bl, priq p -> Abs p al -> Abs p bl -> permutation al bl.
+    forall p al bl, priq p -> Abs p al -> Abs p bl -> Permutation al bl.
   Axiom empty_priq : priq empty.
   Axiom empty_relate : Abs empty nil.
   Axiom insert_priq : forall k p, priq p -> priq (insert k p).
@@ -30,13 +30,13 @@ Module Type PRIQUEUE.
        Abs p pl →
        delete_min p = Some (k,q) →
        Abs q ql →
-       permutation pl (k::ql) ∧ Forall (le k) ql.
+       Permutation pl (k::ql) ∧ Forall (le k) ql.
   Axiom merge_priq : forall p q, priq p -> priq q -> priq (merge p q).
   Axiom merge_relate :
     forall p q pl ql al,
        priq p -> priq q ->
        Abs p pl -> Abs q ql -> Abs (merge p q) al ->
-       permutation al (pl++ql).
+       Permutation al (pl++ql).
 
 End PRIQUEUE.
 
@@ -53,15 +53,8 @@ Module CartesianTree <: PRIQUEUE.
   Definition abs : cartesian_tree -> list nat -> Prop.
   Admitted.
 
-
-  (*to do*)
-  Fixpoint perm (l1: list nat) (l2: list nat) : Prop :=
-  match l1, l2 with
-  | nil, nil => True
-  | nil, _ => False
-  | _, nil => False
-  | (x::xs), (y::ys) => False (*if ( Nat.eqb (List.count_occ l1 x) (List.count_occ l2 x)) then perm remove x (x::xs) remove x (y::ys) else False*)
-  end.
+  Print count_occ.
+  Print Permutation.
 
   Fixpoint ct_insert (n: nat) (ct: cartesian_tree) : cartesian_tree :=
   match ct with
@@ -107,7 +100,7 @@ Module CartesianTree <: PRIQUEUE.
   Proof. Admitted.
 
   Theorem abs_perm_ct : 
-    forall p al bl, ct p -> abs p al -> abs p bl -> perm al bl.
+    forall p al bl, ct p -> abs p al -> abs p bl -> Permutation al bl.
   Proof. Admitted.
 
   Theorem empty_ct : ct ct_empty.
@@ -136,7 +129,7 @@ Module CartesianTree <: PRIQUEUE.
        abs p pl →
        ct_delete_min p = Some (k,q) →
        abs q ql →
-       perm pl (k::ql) ∧ Forall (le k) ql.
+       Permutation pl (k::ql) ∧ Forall (le k) ql.
   Proof. Admitted.
 
   Theorem merge_ct : forall p q, ct p -> ct q -> ct (ct_merge p q).
@@ -146,7 +139,7 @@ Module CartesianTree <: PRIQUEUE.
     forall p q pl ql al,
        ct p -> ct q ->
        abs p pl -> abs q ql -> abs (ct_merge p q) al ->
-       perm al (pl++ql).
+       Permutation al (pl++ql).
   Proof. Admitted.
 
   Theorem in_order_traversal : forall (l : list nat), (l = (ct_flatten (create_cartesian_tree l))).
@@ -155,7 +148,6 @@ Module CartesianTree <: PRIQUEUE.
   Definition key := nat.
   Definition insert := ct_insert.
   Definition priqueue := cartesian_tree.
-  Definition permutation := perm.
   Definition empty := ct_empty.
   Definition delete_min := ct_delete_min.
   Definition merge := ct_merge.
