@@ -158,7 +158,10 @@ Module CartesianTree <: PRIQUEUE.
 
   Theorem delete_min_Some_ct :
     forall p q k, ct p → ct_delete_min p = Some(k,q) → ct q.
-  Proof. intros. unfold ct. reflexivity. Qed.
+  Proof. intros. destruct q. 
+    - reflexivity. 
+    - apply H.
+  Qed.
 
   Theorem delete_min_Some_relate_ct :
     forall (p q: cartesian_tree) k (pl ql: list nat), ct p →
@@ -169,7 +172,7 @@ Module CartesianTree <: PRIQUEUE.
   Proof. Admitted.
 
   Theorem merge_ct : forall p q, ct p -> ct q -> ct (ct_merge p q).
-  Proof. Admitted.
+  Proof. intros. reflexivity. Qed.
 
   Theorem merge_relate_ct :
     forall p q pl ql al,
@@ -179,7 +182,9 @@ Module CartesianTree <: PRIQUEUE.
   Proof. Admitted.
 
   Theorem in_order_traversal : forall (l : list nat), (l = (ct_flatten (create_cartesian_tree l))).
-  Proof. Admitted.
+  Proof. intros. destruct l.
+    - unfold create_cartesian_tree. simpl. reflexivity.
+    - unfold create_cartesian_tree. Admitted.
 
   Definition key := nat.
   Definition insert := ct_insert.
