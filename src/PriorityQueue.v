@@ -143,7 +143,7 @@ Module CartesianTree <: PRIQUEUE.
   Proof. reflexivity. Qed.
 
   Theorem empty_relate_ct : abs ct_empty nil.
-  Proof. Admitted. 
+  Proof. unfold abs. reflexivity. Qed. 
 
   Theorem insert_ct : forall k p, ct p -> ct (ct_insert k p).
   Proof. intros. unfold ct. reflexivity. Qed.
